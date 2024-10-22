@@ -130,9 +130,9 @@ dist
 .pnp.*
 
 # theme example pages
-theme/assets
-theme/js
-theme/contact.html
-theme/index.html
-theme/projects.html
-theme/resume.html
+public/theme/assets
+public/theme/js
+public/theme/contact.html
+public/theme/index.html
+public/theme/projects.html
+public/theme/resume.html
