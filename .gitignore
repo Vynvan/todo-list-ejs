@@ -128,3 +128,11 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# theme example pages
+theme/assets
+theme/js
+theme/contact.html
+theme/index.html
+theme/projects.html
+theme/resume.html

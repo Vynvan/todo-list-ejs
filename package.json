@@ -1,0 +1,23 @@
+{
+  "name": "todo-list-ejs",
+  "version": "1.0.0",
+  "description": "A little example of converting a php project into a node ejs project.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ejs",
+    "express",
+    "node"
+  ],
+  "author": "Matthias Arndt",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
