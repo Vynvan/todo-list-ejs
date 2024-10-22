@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <%- include('head') %>
+</head>
+<body class="bg-primary bg-opacity-10">
+	<div class="container">
+		<%- include('nav') %>
+		<div class="row align-items-center">
+			<div class="text-center pt-5 mb-5">
+				<h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Meine TODO-Liste</span></h1>
+			</div>
+			<form id="todo-form" class="mb-3">
+				<div class="row g-3 align-items-center px-4">
+					<label for="todo-input" class="col-auto">Neue Aufgabe</label>
+					<input type="text" id="todo-input" class="col mx-3"
+							placeholder="Neue Aufgabe hinzufügen">
+					<button type="submit" class="col-auto btn btn-primary">Hinzufügen</button>
+				</div>
+			</form>
+			<ul id="todo-list">
+				<!-- Unordered list to dynamically add todo list items. -->
+			</ul>
+		</div>
+		<%- include('footer') %>
+	</div>
+	<script src="todo.js"></script>
+</body>
+</html>

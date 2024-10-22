@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<%- include('head') %>
+</head>
+<body class="bg-primary bg-opacity-10">
+	<div class="container">
+		<!-- <?php
+			require_once('classes/Template.php');
+			$template = new Template('templates', []);
+			echo $template->render('nav.php', ['brandTitle' => 'Home']);
+		?> -->
+		<%- include('nav') %>
+		<main>
+			<div class="container-fluid mb-5">
+				<div class="text-center pt-5 mb-5">
+					<h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Hausaufgaben</span></h1>
+				</div>
+				<div class="row gx-5 justify-content-center">
+					<div class="col-lg-11 col-xl-9 col-xxl-8">
+						<!-- Project Card 1-->
+						<div class="card overflow-hidden shadow rounded-4 border-0 mb-5">
+							<div class="card-body">
+								<h2 class="fw-bolder">Aufgabe für Dienstag, den 15. Oktober</h2>
+								<p>Hallo zusammen,</p>
+								<p></p>
+								<p>bitte beschäftigen Sie sich heute noch etwas mit der Navbar. Den aktuellen Stand der Todo-List können Sie mit dem Repository <a href="https://github.com/us-fi36/todo-list-scheidhuber">https://github.com/us-fi36/todo-list-scheidhuber</a> vergleichen. Arbeiten Sie aber bitte auf Ihrem Repository weiter.</p>
+								<p></p>
+								<p>Die aus den Beispielen kopierte Navbar ist eher unübersichtlich und enthält viele Beispieleinträge. Ändern Sie diese, so dass nur noch ein Link für "Home" und einer für die Todo-Liste übrig bleibt. Lesen Sie <a href="https://getbootstrap.com/docs/5.3/components/navbar">https://getbootstrap.com/docs/5.3/components/navbar</a> und verändern die Navbar nach Wunsch.</p>
+								<p></p>
+								<p>Kopieren Sie die Seite `todo-list.html` nach `index.html` und löschen Sie den Inhalt, bis auf das Navigationsmenü. Das ist Ihre Startseite. Fügen Sie etwas Inhalt hinzu, vielleicht einen Überschrift und etwas Text (kann auch Lorem ipsum sein).</p>
+								<p></p>
+								<p>Erstellen Sie eine weitere HTML-Seite mit dem Dateinamen `bootstrap-examples.html`. Sie können einfach die `index.html` kopieren. Passen Sie in allen 3 Dateien die Navigation an, so dass die einzelnen 3 Seiten darüber aufgerufen werden können.</p>
+								<p></p>
+								<p>Commiten Sie die Änderungen in git und posten Sie den Link zu dem Commit (oder die Links, wenn es mehrere sind) hier als Kommentare zu dem Beitrag. Wenn Sie Fragen haben, auch gern hier als Kommentar schreiben.</p>
+								<p></p>
+								<p>Viel Erfolg!</p>
+								<p></p>
+								<p>PS: Die Abgabe der Aufgabe zu heute ist bis 16:00 Uhr möglich, die Nachfrist geht bis heute um 23:00 Uhr.</p>
+							</div>
+						</div>
+						<!-- Project Card 2-->
+						<div class="card overflow-hidden shadow rounded-4 border-0 mb-5">
+							<div class="card-body">
+								<h2 class="fw-bolder">Aufgabe für Mittwoch, 16.10.</h2>
+								<p>Hallo zusammen,</p>
+								<p></p>
+								<p>die Aufgabe vom Ende des Unterrichts bleibt bestehen. Laden Sie sich ein Theme von <a href="https://startbootstrap.com">https://startbootstrap.com</a> herunter. Laden Sie sich dieses herunter, packen es auf Ihren Server, rufen die Seite auf und versuchen Sie es zu verstehen. Dazu schauen Sie am besten in den Code, machen Veränderungen und sehen Sie nach, wie sich diese im Browser auswirken. Falls Dinge unklar bleiben, schauen Sie in die Dokumentation von Bootstrap. Falls Sie die Antworten dort nicht finden, bringen Sie die Fragen morgen mit.</p>
+								<p></p>
+								<p>Wie schon angekündigt, möchte ich die bisher vermittelten Inhalte von PHP, JavaScript, HTML, CSS zunächst etwas abschließen. Diese werden uns natürlich wiederbegegnen im Verlauf des Kurses bzw. weiterhin begleiten. Für diesen Abschluss sollen Sie jeweils eine kleine Präsentation halten. Dazu müssen Sie keine Folien vorbereiten, sondern nutzen Sie Ihre kleine PHP Seite. Suchen Sie sich ein Teilgebiet aus den verschiedenen Technologien aus, dass Sie genauer erklären. Orientieren Sie sich gern daran, was für Sie wichtig von den Bereichen, neu, schrecklich oder spannend ist. Zeigen Sie dazu Ihren ausgewählten Code, die Seite im Browser und erklären Sie, was wie funktioniert. Sie können auch gern übergeordnete Themen erklären, wie bspw. das Request-Response-Modell funktioniert oder wie der Apache Server eingerichtet wird.</p>
+								<p></p>
+								<p>Die Präsentation soll mindestens 5, aber höchstens 10 Minuten lang sein. Für die Vorbereitung sind verschiedene Wege denkbar, bspw.</p>
+								<ul>
+									<li>1. Nutzen Sie Ihre Seite so, wie sie ist, aber hübschen sie die Inhalte noch etwas auf. Also machen Sie die Rahmen raus, fügen Texte ein, ändern die Farben und setzen das Layout passender als bei meiner technischen Beispielversion.</li>
+									<li>2. Nutzen Sie ein Bootstrap-Theme (s.o.) und bauen Sie dort die Funktionalität, die wir in den letzten Tagen entwickelt haben ein. Dazu bauen Sie das Theme insgesamt um, dass es Ihren Wünschen beim Aussehen der Seite entspricht.</li>
+								</ul>
+								<p></p>
+								<p>Falls Sie Variante 2. nutzen möchten, legen Sie am besten ein eigenes Repository dafür an. Falls Sie gern eine 1 für die Präsentation hätten, dann nutzen Sie Variante 2.</p>
+								<p></p>
+								<p>Wir werden morgen uns Zeit nehmen, alle Fragen zu klären, die bei der Vorbereitung entstehen, bzw. auch im Unterricht die Vorbereitung teilweise zu machen. Entweder beginnen wir da morgen mit den Präsentationen, spätestens am Donnerstag.</p>
+								<p></p>
+								<p>Viel Erfolg</p>
+							</div>
+						</div>
+						<!-- Project Card 3-->
+						<div class="card overflow-hidden shadow rounded-4 border-0 mb-5">
+							<div class="card-body">
+								<h2 class="fw-bolder">Aufgabe für Donnerstag, den 17.10.</h2>
+								<p>Hallo zusammen,</p>
+								<p></p>
+								<p>die Aufgabe für morgen ist logischerweise: Stellen Sie die begonnenen Präsentation fertig.</p>
+								<p></p>
+								<p>Erstellen Sie ein git Repository für Ihre Seite, mit der Sie präsentieren und schreiben Sie den Link dazu bitte als Kommentar unter diesen Beitrag. </p>
+								<p></p>
+								<p>viel Erfolg!</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+	<!-- <?= $template->render('footer.php') ?> -->
+	<%- include('footer') %>
+</body>
+</html>

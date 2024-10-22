@@ -4,8 +4,11 @@
   "description": "A little example of converting a php project into a node ejs project.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js",
+    "start": "node index.js"
   },
+  "type": "module",
   "keywords": [
     "ejs",
     "express",

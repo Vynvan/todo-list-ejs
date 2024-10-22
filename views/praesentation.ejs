@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <%- include('head') %>
+</head>
+<body class="bg-primary bg-opacity-10">
+<div class="container">
+    <%- include('nav') %>
+    <main>
+        <div class="text-center pt-5 mb-5">
+            <h1 class="text-center"><span class="display-5 fw-bolder text-gradient d-inline">Lebenszyklus einer Webseite</span></h1>   
+        </div>
+        <section class="card shadow mt-5">
+            <div class="card-body">
+                <img class="p-3 col-12 col-sm-6 position-absolute top-0 end-0 mb-5 mb-sm-0" src="assets/0_Gw4WAEWeT4Jnaupa.png" alt="">
+                <h5 class="card-title col-12 col-sm-6">Request - Leben einer Anfrage</h5>
+                <p class="fst-italic col-12 col-sm-6">Was passiert, während eine Webseite angefragt wird?</p>
+                <p class="col-12 col-md-6"><strong>Browser:</strong> Die URL der Anfrage wird analysiert, sie enthält Protokoll (Http/Https), Domainname und Pfad zur angefragten Ressource.</p>
+                <p class="col-12 col-lg-6"><strong>Weg übers Internet:</strong> Frag einen FISI... Die Details der Verbindung sind für uns nicht relevant.</p>
+                <p class="col-12 col-xxl-6 pt-xl-4 pt-xxl-0 mb-0"><strong>Webserver:</strong> Der Webserver, in diesem Fall Apache2, analysiert den HTTP-Header, um die Methode (z.B. GET, POST, PUT, DELETE) zu ermitteln. Anschließend erstellt er eine Antwort (Response).</p>
+                <p class="pt-0">Diese Antwort enthält immer einen Status-Code und, falls der Webserver die angeforderte Ressource findet, auch die entsprechenden Daten. Sowohl bei der Anfrage (Request) als auch bei der Antwort befinden sich die gesendeten Daten im Body.</p>
+                <p><strong>Vieles kann bis hier schon schief gegangen sein:</strong></p>
+                <p>Die angeforderte Ressource ist möglicherweise nicht vorhanden oder der Webserver darf nicht auf sie zugreifen.</p>
+                <p>Der Webserver kann den Body der Anfrage nicht lesen, wenn der <span class="fst-italic">Content-Type</span> im Header falsch angegeben oder vom Webserver nicht unterstützt wird.</p>
+            </div>
+        </section>
+        <section class="card shadow mt-5">
+            <div class="card-body">
+                <h5 class="card-title">Response - Entstehung einer Antwort</h5>
+                <p class="fst-italic">Wenn eine Anfrage einfach nur eine Html-Datei anfordert?</p>
+                <p>Kann der Webserver die Datei am angegebenen Pfad finden, darf auf sie zugreifen und sie ausliefern, wird der Inhalt der Datei in den Body der Antwort geschrieben und die Antwort zurückgesendet. Dies stellt den einfachsten Fall dar.</p>
+                <p>Wenn eine Anfrage eine PHP-Datei anfordert, ist der Prozess ähnlich: Der Webserver muss die Datei finden und sicherstellen, dass er darauf zugreifen kann. Allerdings wird die Datei nicht direkt ausgeliefert, sondern an den PHP-Interpreter weitergegeben, der den Code ausführt und das Ergebnis zurückliefert.</p>
+            </div>
+        </section>
+        <section class="card shadow mt-5">
+            <div class="card-body">
+                <h5 class="card-title">PHP-Interpreter</h5>
+                <p>Die PHP-Datei wird vom PHP-Interpreter ausgeführt. Während dieser Ausführung stehen alle globalen Funktionen und Objekte zur Verfügung, die wir von PHP kennengelernt haben.</p>
+                <p>Mit der Funktion <kbd>require</kbd> können weitere Dateien eingebunden werden, solange der PHP-Interpreter Zugriff auf diese hat.</p>
+                <p>Der Body der Anfrage kann über <kbd>file_get_contents('php://input')</kbd> eingelesen werden, je nach <span class="fst-italic">Content-Type</span> muss dieser jedoch möglicherweise konvertiert werden.</p>
+                <p>Zusätzlich ermöglichen die sog. <span class="fst-italic">Superglobals</span> von PHP, wie <kbd>$_SERVER</kbd>, <kbd>$_REQUEST</kbd>, <kbd>$_GET</kbd>, <kbd>$_POST</kbd>, weitere Interaktion mit der Anfrage.</p>
+            </div>
+        </section>
+        <section class="card shadow mt-5">
+            <div class="card-body">
+                <h5 class="card-title">Superglobals</h5>
+                <p>Mit den <span class="fst-italic">Superglobals</span> von PHP kann auf wichtige Informationen der Umgebung und der Anfrage zugegriffen werden.</p>
+                <p><strong>$_SERVER</strong> bietet zahlreiche Umgebungsvariablen wie <kbd>PHP_SELF</kbd> und <kbd>SERVER_ADDR</kbd> zahlreiche Informationen des Request-Headers, wie <kbd>REQUEST_METHOD</kbd>, <kbd>REQUEST_URI</kbd> und <kbd>PATH_INFO</kbd>.</p>
+                <p><strong>$_REQUEST, $_GET und $_POST</strong> sind assoziative Arrays und ermöglichen direkten Zugriff auf die übertragenen Daten.</P>
+                <p><kbd>$_GET</kbd> bietet bei GET-Anfragen Zugriff auf <span class="fst-italic">Query-String</span>.</p>
+                <p><kbd>$_POST</kbd> bietet bei POST-Anfragen Zugriff auf übertragene Formulardaten.</p>
+                <p><strong>$_COOKIE:</strong> Angehängt an jede Anfrage werden auch ALLE Cookies zum Server gesendet und können im PHP-Code verwendet werden.</p>
+            </div>
+        </section>
+        <section class="card shadow mt-5">
+            <div class="card-body">
+                <h5 class="card-title">Antwort mit PHP</h5>
+                <p><strong>header():</strong> Mit der Funktion <kbd>header("Content-Type: application/json")</kbd> legt man den <span class="fst-italic">Content-Type</span> der Antwort fest und damit auch die Art, wie der Antwort-Body erstellt wird. Sobald der <span class="fst-italic">Content-Type</span> festgelegt ist, kann z.B. mit <kbd>echo</kbd> eine Ausgabe erzeugt werden, die dem Response-Body hinzugefügt wird.</p>
+                <p><strong>HTML:</strong> Ohne Aufruf der <span class="fst-italic">header-Funktion</span> wird die PHP-Datei als HTML-Seite im Body versendet, sobald alle <span class="fst-italic">PHP-Tags</span> verarbeitet wurden. Der Aufruf der <span class="fst-italic">header-Funktion</span> <strong>nach</strong> einem <span class="fst-italic">HTML-Tag</span> oder einer anderen Ausgabe verursacht einen Server-Fehler.</P>
+            </div>
+        </section>
+        <section class="card shadow mt-5 mb-5">
+            <div class="card-body">
+                <h5 class="card-title">Im Browser angekommen</h5>
+                <p>Sobald die Antwort vom Webserver an den Browser gesendet wird, beginnt der Browser mit dem Laden der Seite. Der Browser interpretiert den empfangenen HTML-Code und rendert ihn, um die Benutzeroberfläche darzustellen. Während dieses Prozesses werden auch alle verlinkten Ressourcen, wie CSS-Dateien und Bilder, angefordert und geladen.</p>
+                <p>Wenn die Seite JavaScript enthält, wird der JavaScript-Code ebenfalls beim Laden der Seite ausgeführt. Dies kann sowohl inline im HTML-Dokument als auch in externen Dateien geschehen. JavaScript ermöglicht interaktive Elemente und dynamische Inhalte auf der Webseite, indem es auf Benutzeraktionen reagiert oder Daten von Servern über AJAX-Anfragen anfordert. Der Browser verarbeitet diese Anfragen und aktualisiert die Seite entsprechend, ohne sie vollständig neu laden zu müssen.</p>
+            </div>
+        </section>
+        <section id="last-card" class=" card shadow mt-5 mb-5">
+            <div class="card-body">
+                <img class="col-12 col-md-6 float-end mb-5 mb-md-0" src="assets/fetch-API.png" alt="">
+                <h5 class="card-title">Javascripts Request <-> Response</h5>
+                <p class="col-12 col-md-6 pe-3">Mit der fetch-API können Anfragen asynchron, also ohne ein Neuladen der Webseite Anfragen abgeschickt und Antworten ausgewertet werden. Alles was die fetch-Funktion benötigt ist eine URL und ein Request-Objekt wie im Bild.</p>
+                <p class="col-12 col-lg-6 pe-3">Die gesamte oben besprochene Reise dieses Request-Objekts findet dann beim Aufruf der Funktion statt und erst beim Eintreffen der Antwort wird die angehängte <kbd>.then()</kbd> Funktion ausgeführt und im Anschluss die nächste <kbd>.then()</kbd> Funktion etc. .</p>
+            </div>
+        </section>
+    </main>
+	<%- include('footer') %>
+</div>
+</body>
+</html>

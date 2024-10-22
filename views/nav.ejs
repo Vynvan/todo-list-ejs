@@ -1,0 +1,44 @@
+<!-- <nav class="navbar navbar-expand-lg bg-body-tertiary rounded sticky-top" aria-label="Eleventh navbar example"> -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white py-3 sticky-top card shadow" aria-label="Eleventh navbar example">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#"><span class="fw-bolder text-primary">US-FI36/<%= currentPage %></span></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample09" aria-controls="navbarsExample09" 
+        aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExample09">
+            <!-- <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
+                <li class="nav-item">
+                    <a class="nav-link<?= str_ends_with($_SERVER['PHP_SELF'], 'index.php') ? ' active' : ''?>" href="index.php" 
+                    <?= str_ends_with($_SERVER['PHP_SELF'], 'index.php') ? 'aria-current="page"' : ''?>>Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link<?= str_ends_with($_SERVER['PHP_SELF'], 'todo-list.php') ? ' active' : ''?>" href="todo-list.php" 
+                    <?= str_ends_with($_SERVER['PHP_SELF'], 'todo-list.php') ? 'aria-current="page"' : ''?>>Todo-List</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link<?= str_ends_with($_SERVER['PHP_SELF'], 'bootstrap-examples.php') ? ' active' : ''?>" href="bootstrap-examples.php" 
+                    <?= str_ends_with($_SERVER['PHP_SELF'], 'bootstrap-examples.php') ? 'aria-current="page"' : ''?>>BS examples</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link<?= str_ends_with($_SERVER['PHP_SELF'], 'präsentation.php') ? ' active' : ''?>" href="präsentation.php" 
+                    <?= str_ends_with($_SERVER['PHP_SELF'], 'präsentation.php') ? 'aria-current="page"' : ''?>>Präsentation</a>
+                </li>
+            </ul> -->
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
+                <li class="nav-item">
+                    <a class="nav-link<%= currentPage === 'index' ? ' active' : '' %>" href="/" 
+                    <%= currentPage === 'index' ? 'aria-current="page"' : '' %>>Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link<%= currentPage === 'todo-list' ? ' active' : '' %>" href="todo-list" 
+                    <%= currentPage === 'todo-list' ? 'aria-current="page"' : '' %>>Todo-List</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link<%= currentPage === 'presentation' ? ' active' : '' %>" href="praesentation" 
+                    <%= currentPage === 'presentation' ? 'aria-current="page"' : '' %>>Präsentation</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
