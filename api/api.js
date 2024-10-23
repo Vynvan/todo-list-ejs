@@ -1,6 +1,6 @@
 import pool from './db.js';
 
-async function getTodos(res) {
+async function getTodos(req, res) {
     let conn;
     try {
         conn = await pool.getConnection();

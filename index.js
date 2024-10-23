@@ -1,6 +1,6 @@
 import express from "express";
 import getTodos from "./api/api.js";
-import register from "./api/auth.js";
+import auth from "./api/auth.js";
 
 
 const app = express();
@@ -32,11 +32,11 @@ app.get("/praesentation", (req, res) => {
 app.get("/register", (req, res) => {
     res.render("register", { currentPage: "register", title: "Registrierung" });
 });
-app.post("/register", express.urlencoded({ extended: true }), register);
+app.post("/register", express.urlencoded({ extended: true }), auth.register);
 
 
 // JSON-Routes
-app.get("/api", express.json(), (req, res) => getTodos(res));
+app.get("/api", express.json(), getTodos);
 
 
 // Server starten
