@@ -1,18 +1,12 @@
 import express from "express";
-import path from "path";
-import { fileURLToPath } from 'url';
 import getTodos from "./api/api.js";
 
 
 const app = express();
-const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 
 // Statische Assets bereitstellen
-app.use('/assets', express.static(path.join(dirname, 'public', 'assets')));
-app.use('/css', express.static(path.join(dirname, 'public', 'css')));
-app.use('/js', express.static(path.join(dirname, 'public', 'js')));
-app.use('/theme/css', express.static(path.join(dirname, 'public', 'theme', 'css')));
+app.use(express.static('public'));
 
 
 // EJS als View-Engine einrichten
