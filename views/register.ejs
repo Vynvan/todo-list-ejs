@@ -23,8 +23,8 @@
             <label for="password">Passwort bestätigen:</label>
             <input type="password" id="password" name="password2" required><br><br>
 
-            <% if (locals.err) { %>
-                <p style="color:red"><%= err %></p>
+            <% if (locals.error) { %>
+                <p style="color:red"><%= locals.error %></p>
             <% } %>
             
             <button type="submit">Registrieren</button>

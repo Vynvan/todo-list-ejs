@@ -31,10 +31,25 @@ async function createTodo(req, res) {
     }
 }
 
+async function deleteTodo(req, res) {
+    const { id } = req.body;
+    let conn;
+    try {
+        conn = await pool.getConnection();
+        const result = await conn.query('DELETE FROM todos WHERE id=?', [id]);
+        console.log(result)
+        res.status(200).end(JSON.stringify({ id: parseInt(result.insertId) }));
+    } catch (err) {
+        handleError(err, res, 'addTodo');
+    } finally {
+        if (conn !== undefined) conn.release();
+    }
+}
+
 function handleError(err, res, method="") {
     console.log(`##### ERROR DURING API.JS/${method}: ${err} #####`);
     res.writeHead(500, { 'Content-Type': 'text/plain' });
     res.end('Failed to read data from database.');
 }
 
-export default { getTodos, createTodo };
+export default { getTodos, createTodo, deleteTodo };

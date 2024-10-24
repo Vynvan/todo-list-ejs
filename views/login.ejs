@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<%- include('partials/head') %>
+<body class="bg-primary bg-opacity-10">
+	<div class="container">
+        <%- include('partials/nav') %>
+        <div class="text-center pt-5 mb-5">
+            <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Login</span></h1>
+        </div>
+        <form action="/login" method="POST">
+            <label for="username">Benutzername:</label>
+            <input type="text" id="username" name="username" required value="<%= locals.username ? locals.username : "" %>"><br><br>
+     
+            <label for="password">Passwort:</label>
+            <input type="password" id="password" name="password" required value="<%= locals.password ? locals.password : "" %>"><br><br>
+     
+            <button type="submit">Login</button>
+        </form>
+        <% if (locals.error) { %>
+            <p style="color:red"><%= locals.error %></p>
+        <% } %>
+        <p>Noch keinen Account? <a href="/register">Registrieren!</a></p>
+        <%- include('partials/footer') %>
+    </div>
+</body>
+</html>

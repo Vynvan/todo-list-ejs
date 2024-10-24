@@ -1,4 +1,5 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 import api from "./api/api.js";
 import auth from "./api/auth.js";
 
@@ -6,9 +7,11 @@ import auth from "./api/auth.js";
 const app = express();
 
 
-// Statische Assets bereitstellen
+// Middlewares
 app.use(express.static("public"));
-
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(auth.authenticate);
 
 // EJS als View-Engine einrichten
 app.set("view engine", "ejs");
@@ -32,13 +35,20 @@ app.get("/praesentation", (req, res) => {
 app.get("/register", (req, res) => {
     res.render("register", { currentPage: "register", title: "Registrierung" });
 });
-app.post("/register", express.urlencoded({ extended: true }), auth.register);
+app.post("/register", auth.register);
+
+
+// Login
+app.get("/login", (req, res) => {
+    res.render("login", { currentPage: "login", title: "Login" });
+});
+app.post("/login", auth.login);
 
 
 // JSON-Routes
 app.get("/api", express.json(), api.getTodos);
-app.post("/api", express.urlencoded({ extended: true }), express.json(), api.createTodo);
-
+app.post("/api", express.json(), api.createTodo);
+app.delete("/api", express.json(), api.deleteTodo);
 
 // Server starten
 app.listen(3000, () => {

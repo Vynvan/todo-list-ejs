@@ -7,24 +7,6 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarsExample09">
-            <!-- <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
-                <li class="nav-item">
-                    <a class="nav-link<?= str_ends_with($_SERVER['PHP_SELF'], 'index.php') ? ' active' : ''?>" href="index.php" 
-                    <?= str_ends_with($_SERVER['PHP_SELF'], 'index.php') ? 'aria-current="page"' : ''?>>Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link<?= str_ends_with($_SERVER['PHP_SELF'], 'todo-list.php') ? ' active' : ''?>" href="todo-list.php" 
-                    <?= str_ends_with($_SERVER['PHP_SELF'], 'todo-list.php') ? 'aria-current="page"' : ''?>>Todo-List</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link<?= str_ends_with($_SERVER['PHP_SELF'], 'bootstrap-examples.php') ? ' active' : ''?>" href="bootstrap-examples.php" 
-                    <?= str_ends_with($_SERVER['PHP_SELF'], 'bootstrap-examples.php') ? 'aria-current="page"' : ''?>>BS examples</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link<?= str_ends_with($_SERVER['PHP_SELF'], 'präsentation.php') ? ' active' : ''?>" href="präsentation.php" 
-                    <?= str_ends_with($_SERVER['PHP_SELF'], 'präsentation.php') ? 'aria-current="page"' : ''?>>Präsentation</a>
-                </li>
-            </ul> -->
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
                 <li class="nav-item">
                     <a class="nav-link<%= currentPage === 'index' ? ' active' : '' %>" href="/" 
@@ -37,6 +19,10 @@
                 <li class="nav-item">
                     <a class="nav-link<%= currentPage === 'presentation' ? ' active' : '' %>" href="praesentation" 
                     <%= currentPage === 'presentation' ? 'aria-current="page"' : '' %>>Präsentation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link<%= currentPage === 'login' ? ' active' : '' %>" href="login" 
+                    <%= currentPage === 'login' ? 'aria-current="page"' : '' %>>Login</a>
                 </li>
             </ul>
         </div>
