@@ -9,22 +9,22 @@
         </div>
         <form action="/register" method="POST">
             <label for="username">Benutzername:</label>
-            <input type="text" id="username" name="username" required><br><br>
+            <input type="text" id="username" name="username" required value="<%= locals.username ? locals.username : "" %>"><br><br>
     
             <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required><br><br>
+            <input type="text" id="name" name="name" required value="<%= locals.name ? locals.name : "" %>"><br><br>
     
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required><br><br>
+            <input type="email" id="email" name="email" required value="<%= locals.email ? locals.email : "" %>"><br><br>
     
             <label for="password">Passwort:</label>
-            <input type="password" id="password" name="password" required><br><br>
+            <input type="password" id="password" name="password" required value="<%= locals.password ? locals.password : "" %>"><br><br>
     
             <label for="password">Passwort bestätigen:</label>
             <input type="password" id="password" name="password2" required><br><br>
 
-            <% if (typeof err !== "undefined") { %>
-                <p style="color:red"><%- err %></p>
+            <% if (locals.err) { %>
+                <p style="color:red"><%= err %></p>
             <% } %>
             
             <button type="submit">Registrieren</button>

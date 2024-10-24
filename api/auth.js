@@ -4,27 +4,29 @@ import pool from './db.js';
 async function register(req, res) {
     const { username, name, email, password, password2 } = req.body;
     const hashedPassword = await bcript.hash(password, 10);
+    const resBody = {
+        currentPage: 'register',
+        title: 'Registrierung',
+        username, name, email, password, password2,
+    };
     let conn;
 
     if (password !== password2) {
         res.status(400).render('register', {
-            currentPage: 'register',
-            title: 'Registrierung',
-            err: 'Passwort bestätigen und Passwort ungleich!',
+            ...resBody,
+            err: 'Passwort und Bestätigung sind unterschiedlich!',
         });
+        return;
     }
 
     try {
         conn = await pool.getConnection();
 
-        const user = await conn.query('SELECT id FROM users WHERE email=?', [
-            email,
-        ]);
+        const user = await conn.query('SELECT id FROM users WHERE email=?', [email]);
         if (user) {
             console.error(user);
             res.status(400).render('register', {
-                currentPage: 'register',
-                title: 'Registrierung',
+                ...resBody,
                 err: 'Die Email wird von einem anderen Benutzerkonto verwendet!',
             });
         }
