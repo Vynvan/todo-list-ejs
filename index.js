@@ -1,5 +1,5 @@
 import express from "express";
-import getTodos from "./api/api.js";
+import api from "./api/api.js";
 import auth from "./api/auth.js";
 
 
@@ -36,7 +36,8 @@ app.post("/register", express.urlencoded({ extended: true }), auth.register);
 
 
 // JSON-Routes
-app.get("/api", express.json(), getTodos);
+app.get("/api", express.json(), api.getTodos);
+app.post("/api", express.urlencoded({ extended: true }), express.json(), api.createTodo);
 
 
 // Server starten
