@@ -20,6 +20,13 @@
             <label for="password">Passwort:</label>
             <input type="password" id="password" name="password" required><br><br>
     
+            <label for="password">Passwort bestätigen:</label>
+            <input type="password" id="password" name="password2" required><br><br>
+
+            <% if (typeof err !== "undefined") { %>
+                <p style="color:red"><%- err %></p>
+            <% } %>
+            
             <button type="submit">Registrieren</button>
         </form>
         <%- include('partials/footer') %>
