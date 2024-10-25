@@ -58,7 +58,7 @@ async function register(req, res) {
  */
 async function login(req, res) {
     const { username, password } = req.body;
-    const resBody = { ...LOGIN_BODY, username,  password };
+    const resBody = { ...LOGIN_BODY, username, password };
     let conn, user;
 
     try {
@@ -72,8 +72,7 @@ async function login(req, res) {
     }
 
     if (user && user.length === 0) {
-        return res
-            .status(404)
+        return res.status(404)
             .render('login', { ...resBody, error: 'Benutzername oder Passwort falsch.' });
     }
 
@@ -85,16 +84,14 @@ async function login(req, res) {
     }
 
     config();
-    const token = jwt.sign(
-        { id: user[0].id, username: user[0].username },
-        process.env.TOKEN_KEY,
-        { expiresIn: '2h' }
-    );
+    const token = jwt.sign({ id: user[0].id, username: user[0].username }, process.env.TOKEN_KEY, {
+        expiresIn: '2h',
+    });
     res.cookie('token', token, { httpOnly: true }).redirect('/');
 }
 
 /**
- * Authenticate user middleware. 
+ * Authenticate user middleware.
  * If the token is expired, the user is send to login with 403 and error message.
  * If the token verification fails, the user is send to login with 403 and error message.
  */
@@ -106,8 +103,7 @@ async function authenticate(req, res, next) {
 
         try {
             decoded = jwt.verify(token, process.env.TOKEN_KEY);
-        }
-        catch (err) {
+        } catch (err) {
             return handleTokenError(res, err);
         }
 
@@ -130,8 +126,7 @@ async function loadUser(req, res, next) {
 
         try {
             decoded = jwt.verify(token, process.env.TOKEN_KEY);
-        }
-        catch (err) {
+        } catch (err) {
             return handleTokenError(res, err);
         }
 
@@ -140,11 +135,12 @@ async function loadUser(req, res, next) {
             user = await conn.query('SELECT * FROM users WHERE id = ?', [decoded.id]);
         } catch (err) {
             console.log(`##### ERROR DURING API.JS/authenticate: ${err} #####`);
-            return res.status(500).render('login', { ...LOGIN_BODY, error: 'Fehler beim Authentifizieren!' });
+            return res.status(500)
+                .render('login', { ...LOGIN_BODY, error: 'Fehler beim Authentifizieren!' });
         } finally {
             if (conn !== undefined) conn.release();
         }
-    
+
         if (user && user.length == 1) {
             req.loggedInUser = user[0];
         }
@@ -160,10 +156,17 @@ async function loadUser(req, res, next) {
 function handleTokenError(res, err) {
     if (err.name === 'TokenExpiredError') {
         res.clearCookie('token');
-        return res.status(403).render('login', { ...LOGIN_BODY, error: 'Session abgelaufen! Bitte erneut einloggen.' });
+        return res
+            .status(403)
+            .render('login', {
+                ...LOGIN_BODY,
+                error: 'Session abgelaufen! Bitte erneut einloggen.',
+            });
     }
     console.log(`##### ERROR DURING API.JS/authenticate: ${err} #####`);
-    return res.status(403).render('login', { ...LOGIN_BODY, error: 'Fehler beim Authentifizieren!' });
+    return res
+        .status(403)
+        .render('login', { ...LOGIN_BODY, error: 'Fehler beim Authentifizieren!' });
 }
 
 export default { authenticate, loadUser, login, register };
