@@ -5,6 +5,12 @@ import pool from './db.js';
 
 const LOGIN_BODY = { currentPage: 'login', title: 'login' };
 
+/**
+ * Registers user and calls login.
+ * If password doesn't match password 2, the user gets 400 and the error message, that there is no match.
+ * If SELECT user FROM username gives a user, the user gets 400 and the error message, that the user allready exists.
+ * If the INSERT fails, the user gets 500 and an error message.
+ */
 async function register(req, res) {
     const { username, name, email, password, password2 } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -30,11 +36,11 @@ async function register(req, res) {
     try {
         conn = await pool.getConnection();
         const user = await conn.query('SELECT id FROM users WHERE email=?', [email]);
-        if (user) {
+        if (user && user.length !== 0) {
             console.error(user);
             res.status(400).render('register', {
                 ...resBody,
-                error: 'Die Email wird von einem anderen Benutzerkonto verwendet!',
+                error: 'Ein Benutzerkonto mit dieser Email-Adresse existiert bereits!',
             });
         }
 
@@ -42,10 +48,10 @@ async function register(req, res) {
             'INSERT INTO users (username, name, email, password_hash) VALUES (?, ?, ?, ?)',
             [username, name, email, hashedPassword]
         );
-        res.status(201).redirect('/');
+        login(req, res);
     } catch (err) {
         console.log(`##### ERROR DURING API.JS/register: ${err} #####`);
-        res.status(500).render('login', { ...resBody, error: 'Fehler bei der Registrierung!' });
+        res.status(500).render('register', { ...resBody, error: 'Fehler bei der Registrierung!' });
     } finally {
         if (conn !== undefined) conn.release();
     }
