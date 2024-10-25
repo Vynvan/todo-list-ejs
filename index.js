@@ -13,6 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(auth.authenticate);
 
+
 // EJS als View-Engine einrichten
 app.set("view engine", "ejs");
 
@@ -48,10 +49,12 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
+
 // JSON-Routes
 app.get("/api", express.json(), api.getTodos);
 app.post("/api", express.json(), api.createTodo);
 app.delete("/api", express.json(), api.deleteTodo);
+
 
 // Server starten
 app.listen(3000, () => {

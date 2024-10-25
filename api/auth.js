@@ -50,10 +50,9 @@ async function register(req, res) {
 }
 
 /**
- * Login user
- * @param {*} req
- * @param {*} res
- * @returns
+ * Login user and redirect to "/".
+ * If SELECT user FROM username fails, the user is send to login with error message.
+ * If user not found OR password doesn't match, the user is send to login with error message.
  */
 async function login(req, res) {
     const { username, password } = req.body;
@@ -63,8 +62,7 @@ async function login(req, res) {
         username,
         password,
     };
-    let conn;
-    let user;
+    let conn, user;
 
     try {
         conn = await pool.getConnection();
@@ -73,7 +71,7 @@ async function login(req, res) {
         console.log(`##### ERROR DURING API.JS/login: ${err} #####`);
         return res.status(500).render('login', { ...resBody, error: 'Fehler beim Login!' });
     } finally {
-        conn.release();
+        if (conn !== undefined) conn.release();
     }
 
     if (user && user.length === 0) {
@@ -91,7 +89,7 @@ async function login(req, res) {
 
     config();
     const token = jwt.sign(
-        { username: user[0].username, name: user[0].name, email: user[0].email },
+        { id: user[0].id },
         process.env.TOKEN_KEY,
         { expiresIn: '1h' }
     );
@@ -99,20 +97,37 @@ async function login(req, res) {
 }
 
 /**
- * Authenticate user middleware
+ * Authenticate user middleware. 
+ * If the token verification fails, the user is send to login with 403.
+ * If the SELECT user fails, the user is send to login with 500.
  */
 async function authenticate(req, res, next) {
     const token = req.cookies['token'];
-
     if (token) {
-        jwt.verify(token, process.env.TOKEN_KEY, (err, user) => {
-            if (err) {
-                console.log(err);
-            } else {
-                req.loggedInUser = user;
-                res.locals.loggedIn = true;
-            }
-        });
+        let conn, decoded, user;
+
+        try {
+            decoded = jwt.verify(token, process.env.TOKEN_KEY);
+        }
+        catch (err) {
+            console.log(`##### ERROR DURING API.JS/authenticate: ${err} #####`);
+            return res.status(403).render('login', { error: 'Fehler beim Authentifizieren!' });
+        }
+
+        try {
+            conn = await pool.getConnection();
+            user = await conn.query('SELECT * FROM users WHERE id = ?', [decoded.id]);
+        } catch (err) {
+            console.log(`##### ERROR DURING API.JS/authenticate: ${err} #####`);
+            return res.status(500).render('login', { error: 'Fehler beim Authentifizieren!' });
+        } finally {
+            if (conn !== undefined) conn.release();
+        }
+    
+        if (user && user.length == 1) {
+            req.loggedInUser = user[0];
+            res.locals.loggedIn = true;
+        }
     }
     next();
 }

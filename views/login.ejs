@@ -19,6 +19,7 @@
         <% if (locals.error) { %>
             <p style="color:red"><%= locals.error %></p>
         <% } %>
+        <%= locals.loggedIn %>
         <p>Noch keinen Account? <a href="/register">Registrieren!</a></p>
         <%- include('partials/footer') %>
     </div>
