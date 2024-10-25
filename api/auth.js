@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken';
 import { config } from 'dotenv';
 import pool from './db.js';
 
+const LOGIN_BODY = { currentPage: 'login', title: 'login' };
+
 async function register(req, res) {
     const { username, name, email, password, password2 } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -56,12 +58,7 @@ async function register(req, res) {
  */
 async function login(req, res) {
     const { username, password } = req.body;
-    const resBody = {
-        currentPage: 'login',
-        title: 'Login',
-        username,
-        password,
-    };
+    const resBody = { ...LOGIN_BODY, username,  password };
     let conn, user;
 
     try {
@@ -89,19 +86,44 @@ async function login(req, res) {
 
     config();
     const token = jwt.sign(
-        { id: user[0].id },
+        { id: user[0].id, username: user[0].username },
         process.env.TOKEN_KEY,
-        { expiresIn: '1h' }
+        { expiresIn: '2h' }
     );
     res.cookie('token', token, { httpOnly: true }).redirect('/');
 }
 
 /**
  * Authenticate user middleware. 
- * If the token verification fails, the user is send to login with 403.
- * If the SELECT user fails, the user is send to login with 500.
+ * If the token is expired, the user is send to login with 403 and error message.
+ * If the token verification fails, the user is send to login with 403 and error message.
  */
 async function authenticate(req, res, next) {
+    const token = req.cookies['token'];
+
+    if (token) {
+        let decoded;
+
+        try {
+            decoded = jwt.verify(token, process.env.TOKEN_KEY);
+        }
+        catch (err) {
+            return handleTokenError(res, err);
+        }
+
+        res.locals.loggedIn = true;
+        res.locals.username = decoded.username;
+    }
+    next();
+}
+
+/**
+ * Load user middleware. Hangs the user dataset on req using the jwt token like the authenticate function.
+ * If the token is expired, the user is send to login with 403 and error message.
+ * If the token verification fails, the user is send to login with 403 and error message.
+ * If the SELECT user fails, the user is send to login with 500 and error message.
+ */
+async function loadUser(req, res, next) {
     const token = req.cookies['token'];
     if (token) {
         let conn, decoded, user;
@@ -110,8 +132,7 @@ async function authenticate(req, res, next) {
             decoded = jwt.verify(token, process.env.TOKEN_KEY);
         }
         catch (err) {
-            console.log(`##### ERROR DURING API.JS/authenticate: ${err} #####`);
-            return res.status(403).render('login', { error: 'Fehler beim Authentifizieren!' });
+            return handleTokenError(res, err);
         }
 
         try {
@@ -119,17 +140,30 @@ async function authenticate(req, res, next) {
             user = await conn.query('SELECT * FROM users WHERE id = ?', [decoded.id]);
         } catch (err) {
             console.log(`##### ERROR DURING API.JS/authenticate: ${err} #####`);
-            return res.status(500).render('login', { error: 'Fehler beim Authentifizieren!' });
+            return res.status(500).render('login', { ...LOGIN_BODY, error: 'Fehler beim Authentifizieren!' });
         } finally {
             if (conn !== undefined) conn.release();
         }
     
         if (user && user.length == 1) {
             req.loggedInUser = user[0];
-            res.locals.loggedIn = true;
         }
     }
     next();
 }
 
-export default { authenticate, login, register };
+/**
+ * Helper to handle token errors. Used in "authenticate" and "loadUser".
+ * If the token is expired, the user is send to login with 403 and error message.
+ * If the token verification fails, the user is send to login with 403 and error message.
+ */
+function handleTokenError(res, err) {
+    if (err.name === 'TokenExpiredError') {
+        res.clearCookie('token');
+        return res.status(403).render('login', { ...LOGIN_BODY, error: 'Session abgelaufen! Bitte erneut einloggen.' });
+    }
+    console.log(`##### ERROR DURING API.JS/authenticate: ${err} #####`);
+    return res.status(403).render('login', { ...LOGIN_BODY, error: 'Fehler beim Authentifizieren!' });
+}
+
+export default { authenticate, loadUser, login, register };
