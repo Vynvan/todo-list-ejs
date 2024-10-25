@@ -17,11 +17,7 @@ async function register(req, res) {
     const resBody = {
         currentPage: 'register',
         title: 'Registrierung',
-        username,
-        name,
-        email,
-        password,
-        password2,
+        username, name, email, password, password2,
     };
     let conn;
 
@@ -48,6 +44,7 @@ async function register(req, res) {
             'INSERT INTO users (username, name, email, password_hash) VALUES (?, ?, ?, ?)',
             [username, name, email, hashedPassword]
         );
+
         login(req, res);
     } catch (err) {
         console.log(`##### ERROR DURING API.JS/register: ${err} #####`);
@@ -84,20 +81,20 @@ async function login(req, res) {
 
     const isMatch = await bcrypt.compare(password, user[0].password_hash);
     if (!isMatch) {
-        return res
-            .status(403)
+        return res.status(403)
             .render('login', { ...resBody, error: 'Benutzername oder Passwort falsch.' });
     }
 
     config();
-    const token = jwt.sign({ id: user[0].id, username: user[0].username }, process.env.TOKEN_KEY, {
-        expiresIn: '2h',
-    });
+    const token = jwt.sign(
+        { id: user[0].id, username: user[0].username },
+        process.env.TOKEN_KEY,
+        { expiresIn: '2h' });
     res.cookie('token', token, { httpOnly: true }).redirect('/');
 }
 
 /**
- * Authenticate user middleware.
+ * Authenticate user middleware. Verifies jwt-token and fills "locals.loggedIn" and "locals.username".
  * If the token is expired, the user is send to login with 403 and error message.
  * If the token verification fails, the user is send to login with 403 and error message.
  */
@@ -162,16 +159,14 @@ async function loadUser(req, res, next) {
 function handleTokenError(res, err) {
     if (err.name === 'TokenExpiredError') {
         res.clearCookie('token');
-        return res
-            .status(403)
-            .render('login', {
-                ...LOGIN_BODY,
-                error: 'Session abgelaufen! Bitte erneut einloggen.',
-            });
+        return res.status(403)
+        .render('login', {
+            ...LOGIN_BODY,
+            error: 'Session abgelaufen! Bitte erneut einloggen.',
+        });
     }
     console.log(`##### ERROR DURING API.JS/authenticate: ${err} #####`);
-    return res
-        .status(403)
+    return res.status(403)
         .render('login', { ...LOGIN_BODY, error: 'Fehler beim Authentifizieren!' });
 }
 
