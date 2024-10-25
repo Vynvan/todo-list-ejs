@@ -1,11 +1,13 @@
-import pool from './db.js';
+import express from 'express';
+import pool from '../api/db.js';
 
-async function getTodos(req, res) {
+const router = express.Router();
+
+router.get("/", express.json(), async (req, res) => {
     let conn;
     try {
         conn = await pool.getConnection();
         const rows = await conn.query('SELECT * FROM todos');
-
         res.writeHead(200, {
             'Content-Type': 'application/json;charset=utf-8',
         });
@@ -15,9 +17,9 @@ async function getTodos(req, res) {
     } finally {
         if (conn !== undefined) conn.release();
     }
-}
+});
 
-async function createTodo(req, res) {
+router.post("/", express.json(), async (req, res) => {
     const { text } = req.body;
     let conn;
     try {
@@ -29,27 +31,40 @@ async function createTodo(req, res) {
     } finally {
         if (conn !== undefined) conn.release();
     }
-}
+});
 
-async function deleteTodo(req, res) {
+router.delete("/", express.json(), async (req, res) => {
     const { id } = req.body;
     let conn;
     try {
         conn = await pool.getConnection();
         const result = await conn.query('DELETE FROM todos WHERE id=?', [id]);
-        console.log(result)
-        res.status(200).end(JSON.stringify({ id: parseInt(result.insertId) }));
+        res.status(200).end(JSON.stringify({ success: result.affectedRows }));
     } catch (err) {
         handleError(err, res, 'addTodo');
     } finally {
         if (conn !== undefined) conn.release();
     }
-}
+});
+
+router.put("/", express.json(), async (req, res) => {
+    const { id } = req.body;
+    let conn;
+    try {
+        conn = await pool.getConnection();
+        const result = await conn.query('UPDATE todos SET completed=NOT completed WHERE id=?', [id]);
+        res.status(200).end(JSON.stringify({ success: result.affectedRows }));
+    } catch (err) {
+        handleError(err, res, 'addTodo');
+    } finally {
+        if (conn !== undefined) conn.release();
+    }
+});
 
 function handleError(err, res, method="") {
-    console.log(`##### ERROR DURING API.JS/${method}: ${err} #####`);
+    console.log(`##### ERROR DURING TODO-LIST.JS/${method}: ${err} #####`);
     res.writeHead(500, { 'Content-Type': 'text/plain' });
     res.end('Failed to read data from database.');
 }
 
-export default { getTodos, createTodo, deleteTodo };
+export default router;
