@@ -21,8 +21,12 @@
                     <%= currentPage === 'presentation' ? 'aria-current="page"' : '' %>>Präsentation</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link<%= currentPage === 'login' ? ' active' : '' %>" href="login" 
-                    <%= currentPage === 'login' ? 'aria-current="page"' : '' %>>Login</a>
+                    <% if (locals.loggedIn) { %>
+                        <a class="nav-link" href="logout">Logout</a>
+                    <% } else { %>
+                        <a class="nav-link<%= currentPage === 'login' ? ' active' : '' %>" href="login" 
+                            <%= currentPage === 'login' ? 'aria-current="page"' : '' %>>Login</a>
+                    <% } %>
                 </li>
             </ul>
         </div>

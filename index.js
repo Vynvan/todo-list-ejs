@@ -43,7 +43,10 @@ app.get("/login", (req, res) => {
     res.render("login", { currentPage: "login", title: "Login" });
 });
 app.post("/login", auth.login);
-
+app.get('/logout', (req, res) => {
+    res.clearCookie('token');
+    res.redirect('/');
+});
 
 // JSON-Routes
 app.get("/api", express.json(), api.getTodos);

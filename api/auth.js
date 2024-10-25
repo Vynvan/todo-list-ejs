@@ -110,6 +110,7 @@ async function authenticate(req, res, next) {
                 console.log(err);
             } else {
                 req.loggedInUser = user;
+                res.locals.loggedIn = true;
             }
         });
     }
