@@ -22,11 +22,10 @@ async function register(req, res) {
     let conn;
 
     if (password !== password2) {
-        res.status(400).render('register', {
+        return res.status(400).render('register', {
             ...resBody,
             error: 'Passwort und Bestätigung sind unterschiedlich!',
         });
-        return;
     }
 
     try {
@@ -100,7 +99,6 @@ async function login(req, res) {
  */
 async function authenticate(req, res, next) {
     const token = req.cookies['token'];
-
     if (token) {
         let decoded;
 
@@ -165,7 +163,7 @@ function handleTokenError(res, err) {
             error: 'Session abgelaufen! Bitte erneut einloggen.',
         });
     }
-    console.log(`##### ERROR DURING API.JS/authenticate: ${err} #####`);
+    console.log(`##### ERROR DURING API.JS/handleTokenError: ${err} #####`);
     return res.status(403)
         .render('login', { ...LOGIN_BODY, error: 'Fehler beim Authentifizieren!' });
 }
