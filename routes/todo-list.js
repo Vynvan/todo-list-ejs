@@ -1,13 +1,16 @@
 import express from 'express';
 import pool from '../api/db.js';
+import auth from '../api/auth.js';
 
 const router = express.Router();
+router.use(express.json());
+router.use(auth.loadUser);
 
-router.get("/", express.json(), async (req, res) => {
+router.get("/", async (req, res) => {
     let conn;
     try {
         conn = await pool.getConnection();
-        const rows = await conn.query('SELECT * FROM todos');
+        const rows = await conn.query('SELECT * FROM todos WHERE user_id=?', [req.loggedInUser.id]);
         res.writeHead(200, {
             'Content-Type': 'application/json;charset=utf-8',
         });
@@ -19,12 +22,12 @@ router.get("/", express.json(), async (req, res) => {
     }
 });
 
-router.post("/", express.json(), async (req, res) => {
+router.post("/", async (req, res) => {
     const { text } = req.body;
     let conn;
     try {
         conn = await pool.getConnection();
-        const result = await conn.query('INSERT INTO todos (text) VALUES (?)', [text]);
+        const result = await conn.query('INSERT INTO todos (text, user_id) VALUES (?, ?)', [text, req.loggedInUser.id]);
         res.status(200).end(JSON.stringify({ id: parseInt(result.insertId) }));
     } catch (err) {
         handleError(err, res, 'addTodo');
@@ -33,12 +36,12 @@ router.post("/", express.json(), async (req, res) => {
     }
 });
 
-router.delete("/", express.json(), async (req, res) => {
+router.delete("/", async (req, res) => {
     const { id } = req.body;
     let conn;
     try {
         conn = await pool.getConnection();
-        const result = await conn.query('DELETE FROM todos WHERE id=?', [id]);
+        const result = await conn.query('DELETE FROM todos WHERE id=? AND user_id=?', [id, req.loggedInUser.id]);
         res.status(200).end(JSON.stringify({ success: result.affectedRows }));
     } catch (err) {
         handleError(err, res, 'addTodo');
@@ -47,12 +50,12 @@ router.delete("/", express.json(), async (req, res) => {
     }
 });
 
-router.put("/", express.json(), async (req, res) => {
+router.put("/", async (req, res) => {
     const { id } = req.body;
     let conn;
     try {
         conn = await pool.getConnection();
-        const result = await conn.query('UPDATE todos SET completed=NOT completed WHERE id=?', [id]);
+        const result = await conn.query('UPDATE todos SET completed=NOT completed WHERE id=? AND user_id=?', [id, req.loggedInUser.id]);
         res.status(200).end(JSON.stringify({ success: result.affectedRows }));
     } catch (err) {
         handleError(err, res, 'addTodo');
