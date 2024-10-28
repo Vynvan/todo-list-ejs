@@ -216,6 +216,7 @@ function drop(ev) {
         const toUpdate = [];
         const lis = document.getElementById('todo-list').childNodes;
         for (i=0; i < lis.length; i++) {
+            // console.log(`i=${i}, items[i].id=${items[i].id}, lis[i].id=${lis[i].id}`)
             const item = items[i].id == lis[i].id ? items[i] : items.find(el => el.id == lis[i].id);
             if (item.ix !== i) {
                 item.ix = i;
@@ -285,13 +286,11 @@ function updateItem(item, editFormActive=false) {
         },
         method: 'PUT',
         body: JSON.stringify(item)
-    })
-    .then(response => response.json())
-    .then(data => {
-        printTodoElements([data], true);
-        if (editFormActive)
-            switchForms();
     });
+
+    printTodoElements([item], true);
+    if (editFormActive)
+        switchForms();
 }
 
 /**
@@ -299,13 +298,14 @@ function updateItem(item, editFormActive=false) {
  * @param {*} toUpdate 
  */
 function updateItems(toUpdate) {
+    if (!toUpdate || toUpdate.length === 0) return;
+    
     fetch(apiUrl, {
         headers: {
             'Content-Type': 'application/json'
         },
         method: 'PUT',
         body: JSON.stringify({ items: toUpdate })
-    })
-    .then(response => response.json())
-    .then(data => printTodoElements(data.items, true));
+    });
+    printTodoElements(toUpdate, true);
 }
