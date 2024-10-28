@@ -1,0 +1,42 @@
+main.container {
+    padding-inline-start: 0;
+    max-width: 400px;
+}
+
+li {
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
+}
+li.dropIn {
+    color: green;
+}
+li span {
+    flex-grow: 2;
+    align-self: center;
+}
+
+form {
+    display: flex;
+    align-items: center;
+    padding-left: calc(var(--bs-gutter-x)* .5);
+}
+
+button.btn {
+    padding: 0;
+    border: none;
+    margin: 2px 4px;
+    width: 32px;
+    height: 32px;
+}
+button.btn svg {
+    margin-top: -4px;
+}
+
+.hidden {
+    display: none;
+}
+
+.done span {
+    text-decoration: line-through;
+}

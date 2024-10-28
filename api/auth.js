@@ -13,32 +13,31 @@ const LOGIN_BODY = { currentPage: 'login', title: 'login' };
  */
 async function register(req, res) {
     const { username, name, email, password, password2 } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
     const resBody = {
         currentPage: 'register',
         title: 'Registrierung',
         username, name, email, password, password2,
     };
     let conn;
-
+    
     if (password !== password2) {
         return res.status(400).render('register', {
             ...resBody,
             error: 'Passwort und Bestätigung sind unterschiedlich!',
         });
     }
-
+    
     try {
         conn = await pool.getConnection();
-        const user = await conn.query('SELECT id FROM users WHERE email=?', [email]);
-        if (user && user.length !== 0) {
-            console.error(user);
-            res.status(400).render('register', {
+        const result = await conn.query('SELECT COUNT(*) AS emailCount FROM users WHERE email=?', [email]);
+        if (result[0].emailCount != 0) {
+            return res.status(400).render('register', {
                 ...resBody,
                 error: 'Ein Benutzerkonto mit dieser Email-Adresse existiert bereits!',
             });
         }
-
+        
+        const hashedPassword = await bcrypt.hash(password, 10);
         await conn.query(
             'INSERT INTO users (username, name, email, password_hash) VALUES (?, ?, ?, ?)',
             [username, name, email, hashedPassword]
