@@ -103,9 +103,10 @@ async function authenticate(req, res, next) {
         let decoded;
 
         try {
+            config();
             decoded = jwt.verify(token, process.env.TOKEN_KEY);
         } catch (err) {
-            return handleTokenError(res, err);
+            return handleTokenError(res, err, 'authenticate');
         }
 
         res.locals.loggedIn = true;
@@ -126,9 +127,10 @@ async function loadUser(req, res, next) {
         let conn, decoded, user;
 
         try {
+            config();
             decoded = jwt.verify(token, process.env.TOKEN_KEY);
         } catch (err) {
-            return handleTokenError(res, err);
+            return handleTokenError(res, err, 'loadUser');
         }
 
         try {
@@ -154,7 +156,7 @@ async function loadUser(req, res, next) {
  * If the token is expired, the user is send to login with 403 and error message.
  * If the token verification fails, the user is send to login with 403 and error message.
  */
-function handleTokenError(res, err) {
+function handleTokenError(res, err, method="handleTokenError") {
     if (err.name === 'TokenExpiredError') {
         res.clearCookie('token');
         return res.status(403)
@@ -163,7 +165,7 @@ function handleTokenError(res, err) {
             error: 'Session abgelaufen! Bitte erneut einloggen.',
         });
     }
-    console.log(`##### ERROR DURING API.JS/handleTokenError: ${err} #####`);
+    console.log(`##### ERROR DURING API.JS/${method}: ${err} #####`);
     return res.status(403)
         .render('login', { ...LOGIN_BODY, error: 'Fehler beim Authentifizieren!' });
 }
