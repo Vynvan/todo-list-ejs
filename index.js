@@ -4,6 +4,7 @@ import pagesRouter from "./routes/pages.js";
 import todolistRouter from "./routes/todo-list.js";
 import usersRouter from "./routes/users.js";
 import auth from "./api/auth.js";
+import { config } from "dotenv";
 
 const app = express();
 
@@ -22,6 +23,6 @@ app.use('/', usersRouter);
 app.use('/api', todolistRouter);
 
 // Server starten
-app.listen(3000, () => {
-    console.log("Server läuft auf http://localhost:3000");
-});
+config();
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log("Server läuft auf http://localhost:" + port.toString()));
