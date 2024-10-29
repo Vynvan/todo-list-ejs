@@ -46,3 +46,7 @@ ul {
 #todo-list li :first-child {
     margin-left: auto;
 }
+
+#edit-form input, #todo-form input {
+    width: calc(100% - 122px);
+}
