@@ -64,6 +64,7 @@ function addDeleteButton(li, item) {
             method: 'DELETE',
             body: JSON.stringify({ id: item.id })
         });
+
         li.remove();
         items.slice(items.indexOf(item), 1);
     });
@@ -254,8 +255,7 @@ function insertItem(item) {
 }
 
 /**
- * Prints the given data as todos into the ul#todoList 
- * OR inserts it to the items list and overrides existing li-elements.
+ * Inserts the given items into the items list and rerenders the ul#todolist.
  * @param {*} items An array of todo items
  * @param {*} update If true, the given todo items are merged with the existing ones
  */
@@ -270,7 +270,9 @@ function printTodoElements(newItems, update=false) {
     items.forEach(item => addTodoElement(todoList, item));
 }
 
-// Sets the todo-form hidden and the edit-form unhidden an vise versa
+/**
+ * Sets the todo-form hidden and the edit-form unhidden an vise versa.
+ */
 function switchForms() {
     document.getElementById('todo-form').classList.toggle('hidden');
     document.getElementById('edit-form').classList.toggle('hidden');
@@ -278,7 +280,11 @@ function switchForms() {
     document.getElementById('edit-input').value = "";
 }
 
-// Does a PUT request with the given item and updates the ul#todolist and the items list after response
+/**
+ * Does a PUT request with the given item and updates the ul#todolist and the items list after response
+ * @param {*} item 
+ * @param {*} editFormActive 
+ */
 function updateItem(item, editFormActive=false) {
     fetch(apiUrl, {
         headers: {
@@ -307,5 +313,6 @@ function updateItems(toUpdate) {
         method: 'PUT',
         body: JSON.stringify({ items: toUpdate })
     });
+
     printTodoElements(toUpdate, true);
 }
