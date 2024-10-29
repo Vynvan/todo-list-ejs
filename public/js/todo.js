@@ -1,11 +1,11 @@
 const apiUrl = "api";
 let editListener = null; // Holds the listener for accepting the edit of an item
-let items = null; // Drag/Session: Holds the last GET itemlist
+let items = []; // Drag/Session: Holds the last GET itemlist
 let draggedItem = null; // Drag: Holds the currently dragged item
 let draggedLi = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    
+
     // fetch to GET todo elements
     fetch(apiUrl)
     .then(response => response.json())
@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const todoInput = document.getElementById('todo-input').value;
         const newItem = { text: todoInput };
+        let li;
         fetch(apiUrl, {
             headers: {
                 'Content-Type': 'application/json'
@@ -25,12 +26,18 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(response => response.json())
         .then(data => {
-            const todoList = document.getElementById('todo-list');
-            newItem.done = 0;
             newItem.id = data.id;
-            addTodoElement(todoList, newItem);
-            document.getElementById('todo-input').value = "";
+            if (li) {
+                li.id = data.id;
+            }
         });
+
+        newItem.done = 0;
+        newItem.ix = items.length > 0 ? items[items.length - 1].ix + 1 : 0;
+        items.push(newItem);
+        const todoList = document.getElementById('todo-list');
+        li = addTodoElement(todoList, newItem);
+        document.getElementById('todo-input').value = "";
     });
 
     document.getElementById('abort-edit').addEventListener('click', () => switchForms());
@@ -42,9 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
  * @param {*} item 
  */
 function addTodoElement(list, item) {
-    console.log(item);
     const li = createTodoElement(item);
     list.appendChild(li);
+    return li
 }
 
 /**
@@ -66,7 +73,7 @@ function addDeleteButton(li, item) {
         });
 
         li.remove();
-        items.slice(items.indexOf(item), 1);
+        items.splice(items.indexOf(item), 1);
     });
     li.appendChild(button);
 }
@@ -150,7 +157,8 @@ function createRoundButton() {
 function createTodoElement(item) {
     const li = document.createElement('li');
     const text = document.createElement('span');
-    li.id = item.id;
+    if (item.id)
+        li.id = item.id;
     if (item.done)
         li.classList.add('done');
     text.textContent = item.text;
@@ -179,13 +187,11 @@ function dragenter(ev) {
         const targetLi = getTargetLi(ev);
         if (targetLi && targetLi.tagName === "LI" && targetLi.id != draggedLi.id) {
             const ul = targetLi.parentNode;
-            const prevLi = ul.querySelector(`li[id="${draggedLi.id}"]`);
-            if (prevLi) {
+            const presentDraggedLi = ul.querySelector(`li[id="${draggedLi.id}"]`);
+            if (presentDraggedLi) {
                 const item = items.find(el => el.id == targetLi.id);
-                // const clone = targetLi.cloneNode(true);
-                // addDragFunctionality(clone, item);
-                const clone = createTodoElement(item);
-                ul.replaceChild(clone, prevLi);
+                const targetLiClone = createTodoElement(item);
+                ul.replaceChild(targetLiClone, presentDraggedLi);
             }
             ul.replaceChild(draggedLi, targetLi);
         }
@@ -201,8 +207,7 @@ function dragstart(ev, item) {
     ev.dataTransfer.effectAllowed = 'move';
     ev.dataTransfer.setData('text/plain', item.id);
     draggedItem = item;
-    draggedLi = getTargetLi(ev).cloneNode(true);
-    addDragFunctionality(draggedLi, item);
+    draggedLi = createTodoElement(item);
 }
 
 /**
@@ -216,8 +221,7 @@ function drop(ev) {
         ev.preventDefault();
         const toUpdate = [];
         const lis = document.getElementById('todo-list').childNodes;
-        for (i=0; i < lis.length; i++) {
-            // console.log(`i=${i}, items[i].id=${items[i].id}, lis[i].id=${lis[i].id}`)
+        for (i = 0; i < lis.length; i++) {
             const item = items[i].id == lis[i].id ? items[i] : items.find(el => el.id == lis[i].id);
             if (item.ix !== i) {
                 item.ix = i;
@@ -259,12 +263,12 @@ function insertItem(item) {
  * @param {*} items An array of todo items
  * @param {*} update If true, the given todo items are merged with the existing ones
  */
-function printTodoElements(newItems, update=false) {
+function printTodoElements(newItems, update = false) {
     if (update && items && items.length > 0) {
         newItems.forEach(item => insertItem(item));
-        items.sort((a, b) => a.ix - b.ix);
     }
     else items = newItems;
+    items.sort((a, b) => a.ix - b.ix);
     const todoList = document.getElementById('todo-list');
     todoList.innerHTML = '';
     items.forEach(item => addTodoElement(todoList, item));
@@ -285,7 +289,7 @@ function switchForms() {
  * @param {*} item 
  * @param {*} editFormActive 
  */
-function updateItem(item, editFormActive=false) {
+function updateItem(item, editFormActive = false) {
     fetch(apiUrl, {
         headers: {
             'Content-Type': 'application/json'
@@ -305,7 +309,7 @@ function updateItem(item, editFormActive=false) {
  */
 function updateItems(toUpdate) {
     if (!toUpdate || toUpdate.length === 0) return;
-    
+
     fetch(apiUrl, {
         headers: {
             'Content-Type': 'application/json'

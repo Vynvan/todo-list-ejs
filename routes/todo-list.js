@@ -31,12 +31,13 @@ router.post('/', async (req, res) => {
     try {
         conn = await pool.getConnection();
         const [{ maxIx }] = await conn.query('SELECT COALESCE(MAX(ix), -1) AS maxIx FROM todos');
+        const ix = maxIx + 1;
         const result = await conn.query('INSERT INTO todos (text, userid, ix) VALUES (?, ?, ?)', [
             text,
             req.loggedInUser.id,
-            maxIx + 1,
+            ix,
         ]);
-        res.status(200).end(JSON.stringify({ id: parseInt(result.insertId) }));
+        res.status(200).end(JSON.stringify({ id: parseInt(result.insertId), ix }));
     } catch (err) {
         handleError(err, res, 'addTodo');
     } finally {
@@ -62,28 +63,23 @@ router.delete('/', async (req, res) => {
 });
 
 router.put('/', async (req, res) => {
-    if (req.body.items && req.body.items.length > 0) {
-        req.body.items.forEach(async ({ id, ix, text, done }) => {
-            try {
-                console.log(id, ix, text, done)
-                conn = await pool.getConnection();
-                const result = updateItem(conn, req.loggedInUser.id, id, done, ix, text); //TODO result array outer forEach
-                return res.status(200).end(JSON.stringify({ success: result.affectedRows }));
-            } catch (err) {
-                handleError(err, res, 'addTodo');
-            } finally {
-                if (conn) conn.release();
-                console.log('update finally done!')
-            }
-        });
-    }
-
-    const { id, ix, text, done } = req.body;
     let conn;
     try {
         conn = await pool.getConnection();
-        updateItem(conn, req.loggedInUser.id, id, done, ix, text);
-        res.status(200).end(JSON.stringify({ success: result.affectedRows }));
+        if (req.body.items && req.body.items.length > 0) {
+            let affectedRows = 0;
+            req.body.items.forEach(async ({ id, ix, text, done }) => {
+                const result = updateItem(conn, req.loggedInUser.id, id, done, ix, text);
+                if (result)
+                    affectedRows += result.affectedRows || 0;
+            });
+            res.status(200).end(JSON.stringify({ success: affectedRows }));
+        }
+        else {
+            const { id, ix, text, done } = req.body;
+            const result = updateItem(conn, req.loggedInUser.id, id, done, ix, text);
+            res.status(200).end(JSON.stringify({ success: result ? result.affectedRows : 0 }));
+        }
     } catch (err) {
         handleError(err, res, 'addTodo');
     } finally {
