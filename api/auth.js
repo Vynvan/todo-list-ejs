@@ -7,8 +7,8 @@ const LOGIN_BODY = { currentPage: 'login', title: 'login' };
 
 /**
  * Registers user and calls login.
- * If password doesn't match password 2, the user gets 400 and the error message, that there is no match.
- * If SELECT user FROM username gives a user, the user gets 400 and the error message, that the user allready exists.
+ * If password doesn't match password2, the user gets 400 and the error message, that there is no match.
+ * If "SELECT user FROM username" gives a user, the user gets 400 and the error message, that the user allready exists.
  * If the INSERT fails, the user gets 500 and an error message.
  */
 async function register(req, res) {
@@ -33,10 +33,22 @@ async function register(req, res) {
 
     try {
         conn = await pool.getConnection();
-        const result = await conn.query('SELECT COUNT(*) AS emailCount FROM users WHERE email=?', [
-            email,
-        ]);
-        if (result[0].emailCount != 0) {
+        const [{ emailCount }] = await conn.query(
+            'SELECT COUNT(*) AS emailCount FROM users WHERE email=?',
+            [email]
+        );
+        if (emailCount != 0) {
+            return res.status(400).render('register', {
+                ...resBody,
+                error: 'Ein Benutzerkonto mit dieser Email-Adresse existiert bereits!',
+            });
+        }
+
+        const [{ usernameCount }] = await conn.query(
+            'SELECT COUNT(*) AS usernameCount FROM users WHERE username=?',
+            [username]
+        );
+        if (usernameCount != 0) {
             return res.status(400).render('register', {
                 ...resBody,
                 error: 'Ein Benutzerkonto mit dieser Email-Adresse existiert bereits!',
@@ -67,7 +79,7 @@ async function login(req, res) {
     const { username, password } = req.body;
     const resBody = { ...LOGIN_BODY, username, password };
     let conn, user;
-    
+
     try {
         conn = await pool.getConnection();
         [user] = await conn.query('SELECT * FROM users WHERE username = ?', [username]);
@@ -79,14 +91,12 @@ async function login(req, res) {
     }
 
     if (!user) {
-        return res.status(404)
-            .render('login', { ...resBody, error: 'Benutzername oder Passwort falsch.' });
+        return res.status(404).render('login', { ...resBody, error: 'Benutzername oder Passwort falsch.' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) {
-        return res.status(403)
-            .render('login', { ...resBody, error: 'Benutzername oder Passwort falsch.' });
+        return res.status(403).render('login', { ...resBody, error: 'Benutzername oder Passwort falsch.' });
     }
 
     config();
@@ -145,9 +155,7 @@ async function loadUser(req, res, next) {
             if (conn !== undefined) conn.release();
         }
 
-        if (user) {
-            req.loggedInUser = user;
-        }
+        if (user) req.loggedInUser = user;
     }
     next();
 }
