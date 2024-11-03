@@ -304,7 +304,7 @@ function updateItem(item, editFormActive = false) {
 }
 
 /**
- * Fetches the given todo items as PUT, then inserts it into items list and ul#todolist.
+ * Fetches the given todo items as PUT, then inserts them into items list and ul#todolist.
  * @param {*} toUpdate
  */
 function updateItems(toUpdate) {

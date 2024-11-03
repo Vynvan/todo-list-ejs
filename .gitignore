@@ -136,3 +136,6 @@ public/theme/contact.html
 public/theme/index.html
 public/theme/projects.html
 public/theme/resume.html
+
+# prettier config file
+.prettierrc
