@@ -1,0 +1,9 @@
+{
+  "arrowParens": "avoid",
+  "bracketSameLine": true,
+  "printWidth": 120, 
+  "singleAttributePerLine": false,
+  "tabWidth": 3,
+  "trailingComma": "none",
+  "useTabs": false
+}
